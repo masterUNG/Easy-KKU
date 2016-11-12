@@ -1,10 +1,12 @@
 package appewtc.masterung.easykku;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -19,7 +21,8 @@ public class SignUpActivity extends AppCompatActivity {
             userEditText, passwordEditText;
     private ImageView imageView;
     private Button button;
-    private String nameString, phoneString, userString, passwordString;
+    private String nameString, phoneString, userString, passwordString,
+            imagePathString, imageNameString;
     private Uri uri;
 
 
@@ -84,7 +87,7 @@ public class SignUpActivity extends AppCompatActivity {
                                     Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if ((requestCode == 0) && (resultCode == RESULT_OK))  {
+        if ((requestCode == 0) && (resultCode == RESULT_OK)) {
 
             Log.d("12novV1", "Result OK");
 
@@ -100,9 +103,33 @@ public class SignUpActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
 
+            //Find Path of Image
+            imagePathString = myFindPath(uri);
+            Log.d("12novV1", "imagePath ==> " + imagePathString);
+
 
         }   // if
 
     }   // onActivity
+
+    private String myFindPath(Uri uri) {
+
+        String result = null;
+        String[] strings = {MediaStore.Images.Media.DATA};
+        Cursor cursor = getContentResolver().query(uri, strings, null, null, null);
+
+        if (cursor != null) {
+
+            cursor.moveToFirst();
+            int index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+            result = cursor.getString(index);
+
+        } else {
+            result = uri.getPath();
+        }
+
+
+        return result;
+    }
 
 }   // Main Class
